@@ -1,0 +1,68 @@
+{
+    "python.envFile": "${workspaceFolder}/.env",
+    "editor.fontSize": 16,
+    "C_Cpp.default.includePath": [
+        "..\\..\\..\\source\\third_party\\CMSIS\\Core\\Include",
+        "..\\..\\..\\source",
+        "..\\..\\lcd",
+        "..\\app",
+        "..\\hardware",
+        "..\\middleware",
+        "..\\..\\..\\drivers\\lcd\\st7789\\src",
+        "..\\..\\..\\drivers\\lcd\\st7789\\example",
+        "..\\..\\..\\libraries\\printf-4.0.0"
+    ],
+    "C_Cpp.default.defines": [
+        "__MSPM0G3507__"
+    ],
+        "actionButtons": {
+        "commands": [
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "\ud83e\udd79Rebuild",
+                "color": "white",
+                "singleInstance": true,
+                "saveAll": true,
+                "command": "tools/Uv4Caller.exe -o ${workspaceFolder}/keil/build.log -c 'UV4 -r ${workspaceFolder}/keil/project.uvprojx -j0'"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "\ud83e\udd70Flash",
+                "color": "white",
+                "singleInstance": true,
+                "command": "tools/Uv4Caller.exe -o ${workspaceFolder}/keil/build.log -c 'UV4 -f ${workspaceFolder}/keil/project.uvprojx -j0'"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "\ud83d\udc25Keil",
+                "color": "white",
+                "singleInstance": true,
+                "command": "UV4 ${workspaceFolder}/keil/project.uvprojx"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "\ud83e\udd14RTT Viewer",
+                "color": "white",
+                "singleInstance": true,
+                "command": "openocd -f ./.vscode/openocd_daplink.cfg -f ./.vscode/openocd_rtt.cfg & telnet localhost 8888"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "\ud83e\uddd0Monitor",
+                "color": "white",
+                "singleInstance": true,
+                "command": ".vscode/monitor.ps1"
+            },
+            {
+                "cwd": "${workspaceFolder}",
+                "name": "🥶clangd",
+                "color": "white",
+                "singleInstance": true,
+                "command": "tools/uvConvertor-CLI.exe -f keil/project.uvprojx -o ."
+            }
+        ],
+        "defaultColor": "white",
+        "reloadButton": "\ud83e\udee1",
+        "loadNpmCommands": false
+    }
+}
