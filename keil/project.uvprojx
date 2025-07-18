@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\pid_project;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares</IncludePath>
+              <IncludePath>..\..\pid_project;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares;..\libraries\printf</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -415,12 +415,37 @@
           <GroupName>applications</GroupName>
         </Group>
         <Group>
-          <GroupName>drivers/led</GroupName>
+          <GroupName>bsp/led</GroupName>
           <Files>
             <File>
               <FileName>bsp_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\bsp\bsp_led.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>bsp/uart</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\bsp_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>drivers/printf</GroupName>
+          <Files>
+            <File>
+              <FileName>printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\printf\printf.c</FilePath>
+            </File>
+            <File>
+              <FileName>port_printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\applications\port_printf.c</FilePath>
             </File>
           </Files>
         </Group>
