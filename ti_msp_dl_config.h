@@ -102,6 +102,21 @@ extern "C" {
 
 
 
+/* Defines for SPI_LCD */
+#define SPI_LCD_INST                                                       SPI1
+#define SPI_LCD_INST_IRQHandler                                 SPI1_IRQHandler
+#define SPI_LCD_INST_INT_IRQN                                     SPI1_INT_IRQn
+#define GPIO_SPI_LCD_PICO_PORT                                            GPIOB
+#define GPIO_SPI_LCD_PICO_PIN                                     DL_GPIO_PIN_8
+#define GPIO_SPI_LCD_IOMUX_PICO                                 (IOMUX_PINCM25)
+#define GPIO_SPI_LCD_IOMUX_PICO_FUNC                 IOMUX_PINCM25_PF_SPI1_PICO
+/* GPIO configuration for SPI_LCD */
+#define GPIO_SPI_LCD_SCLK_PORT                                            GPIOB
+#define GPIO_SPI_LCD_SCLK_PIN                                     DL_GPIO_PIN_9
+#define GPIO_SPI_LCD_IOMUX_SCLK                                 (IOMUX_PINCM26)
+#define GPIO_SPI_LCD_IOMUX_SCLK_FUNC                 IOMUX_PINCM26_PF_SPI1_SCLK
+
+
 
 /* Port definition for Pin Group GPIO_GRP_LED */
 #define GPIO_GRP_LED_PORT                                                (GPIOB)
@@ -109,6 +124,21 @@ extern "C" {
 /* Defines for PIN_LED: GPIOB.22 with pinCMx 50 on package pin 21 */
 #define GPIO_GRP_LED_PIN_LED_PIN                                (DL_GPIO_PIN_22)
 #define GPIO_GRP_LED_PIN_LED_IOMUX                               (IOMUX_PINCM50)
+/* Port definition for Pin Group GPIO_GRP_LCD */
+#define GPIO_GRP_LCD_PORT                                                (GPIOB)
+
+/* Defines for PIN_RES: GPIOB.10 with pinCMx 27 on package pin 62 */
+#define GPIO_GRP_LCD_PIN_RES_PIN                                (DL_GPIO_PIN_10)
+#define GPIO_GRP_LCD_PIN_RES_IOMUX                               (IOMUX_PINCM27)
+/* Defines for PIN_DC: GPIOB.11 with pinCMx 28 on package pin 63 */
+#define GPIO_GRP_LCD_PIN_DC_PIN                                 (DL_GPIO_PIN_11)
+#define GPIO_GRP_LCD_PIN_DC_IOMUX                                (IOMUX_PINCM28)
+/* Defines for PIN_CS: GPIOB.14 with pinCMx 31 on package pin 2 */
+#define GPIO_GRP_LCD_PIN_CS_PIN                                 (DL_GPIO_PIN_14)
+#define GPIO_GRP_LCD_PIN_CS_IOMUX                                (IOMUX_PINCM31)
+/* Defines for PIN_BLK: GPIOB.26 with pinCMx 57 on package pin 28 */
+#define GPIO_GRP_LCD_PIN_BLK_PIN                                (DL_GPIO_PIN_26)
+#define GPIO_GRP_LCD_PIN_BLK_IOMUX                               (IOMUX_PINCM57)
 
 /* clang-format on */
 
@@ -117,6 +147,7 @@ void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_UART_DEBUG_init(void);
+void SYSCFG_DL_SPI_LCD_init(void);
 
 
 bool SYSCFG_DL_saveConfiguration(void);

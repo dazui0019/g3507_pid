@@ -40,6 +40,8 @@
 
 #include "ti_msp_dl_config.h"
 
+DL_SPI_backupConfig gSPI_LCDBackup;
+
 /*
  *  ======== SYSCFG_DL_init ========
  *  Perform any initialization needed before using any board APIs
@@ -51,19 +53,46 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     /* Module-Specific Initializations*/
     SYSCFG_DL_SYSCTL_init();
     SYSCFG_DL_UART_DEBUG_init();
+    SYSCFG_DL_SPI_LCD_init();
+    /* Ensure backup structures have no valid state */
+
+	gSPI_LCDBackup.backupRdy 	= false;
+
+}
+/*
+ * User should take care to save and restore register configuration in application.
+ * See Retention Configuration section for more details.
+ */
+SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
+{
+    bool retStatus = true;
+
+	retStatus &= DL_SPI_saveConfiguration(SPI_LCD_INST, &gSPI_LCDBackup);
+
+    return retStatus;
 }
 
 
+SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
+{
+    bool retStatus = true;
+
+	retStatus &= DL_SPI_restoreConfiguration(SPI_LCD_INST, &gSPI_LCDBackup);
+
+    return retStatus;
+}
 
 SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 {
     DL_GPIO_reset(GPIOA);
     DL_GPIO_reset(GPIOB);
     DL_UART_Main_reset(UART_DEBUG_INST);
+    DL_SPI_reset(SPI_LCD_INST);
 
     DL_GPIO_enablePower(GPIOA);
     DL_GPIO_enablePower(GPIOB);
     DL_UART_Main_enablePower(UART_DEBUG_INST);
+    DL_SPI_enablePower(SPI_LCD_INST);
     delay_cycles(POWER_STARTUP_DELAY);
 }
 
@@ -78,12 +107,33 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_DEBUG_IOMUX_RX, GPIO_UART_DEBUG_IOMUX_RX_FUNC);
 
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_SPI_LCD_IOMUX_SCLK, GPIO_SPI_LCD_IOMUX_SCLK_FUNC);
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_SPI_LCD_IOMUX_PICO, GPIO_SPI_LCD_IOMUX_PICO_FUNC);
+
     DL_GPIO_initDigitalOutputFeatures(GPIO_GRP_LED_PIN_LED_IOMUX,
 		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_DOWN,
 		 DL_GPIO_DRIVE_STRENGTH_LOW, DL_GPIO_HIZ_DISABLE);
 
-    DL_GPIO_clearPins(GPIO_GRP_LED_PORT, GPIO_GRP_LED_PIN_LED_PIN);
-    DL_GPIO_enableOutput(GPIO_GRP_LED_PORT, GPIO_GRP_LED_PIN_LED_PIN);
+    DL_GPIO_initDigitalOutput(GPIO_GRP_LCD_PIN_RES_IOMUX);
+
+    DL_GPIO_initDigitalOutput(GPIO_GRP_LCD_PIN_DC_IOMUX);
+
+    DL_GPIO_initDigitalOutput(GPIO_GRP_LCD_PIN_CS_IOMUX);
+
+    DL_GPIO_initDigitalOutput(GPIO_GRP_LCD_PIN_BLK_IOMUX);
+
+    DL_GPIO_clearPins(GPIOB, GPIO_GRP_LED_PIN_LED_PIN |
+		GPIO_GRP_LCD_PIN_RES_PIN |
+		GPIO_GRP_LCD_PIN_DC_PIN |
+		GPIO_GRP_LCD_PIN_BLK_PIN);
+    DL_GPIO_setPins(GPIOB, GPIO_GRP_LCD_PIN_CS_PIN);
+    DL_GPIO_enableOutput(GPIOB, GPIO_GRP_LED_PIN_LED_PIN |
+		GPIO_GRP_LCD_PIN_RES_PIN |
+		GPIO_GRP_LCD_PIN_DC_PIN |
+		GPIO_GRP_LCD_PIN_CS_PIN |
+		GPIO_GRP_LCD_PIN_BLK_PIN);
 
 }
 
@@ -151,5 +201,37 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_DEBUG_init(void)
 
 
     DL_UART_Main_enable(UART_DEBUG_INST);
+}
+
+static const DL_SPI_Config gSPI_LCD_config = {
+    .mode        = DL_SPI_MODE_CONTROLLER,
+    .frameFormat = DL_SPI_FRAME_FORMAT_MOTO3_POL0_PHA0,
+    .parity      = DL_SPI_PARITY_NONE,
+    .dataSize    = DL_SPI_DATA_SIZE_8,
+    .bitOrder    = DL_SPI_BIT_ORDER_MSB_FIRST,
+};
+
+static const DL_SPI_ClockConfig gSPI_LCD_clockConfig = {
+    .clockSel    = DL_SPI_CLOCK_BUSCLK,
+    .divideRatio = DL_SPI_CLOCK_DIVIDE_RATIO_1
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_SPI_LCD_init(void) {
+    DL_SPI_setClockConfig(SPI_LCD_INST, (DL_SPI_ClockConfig *) &gSPI_LCD_clockConfig);
+
+    DL_SPI_init(SPI_LCD_INST, (DL_SPI_Config *) &gSPI_LCD_config);
+
+    /* Configure Controller mode */
+    /*
+     * Set the bit rate clock divider to generate the serial output clock
+     *     outputBitRate = (spiInputClock) / ((1 + SCR) * 2)
+     *     40000000 = (80000000)/((1 + 0) * 2)
+     */
+    DL_SPI_setBitRateSerialClockDivider(SPI_LCD_INST, 0);
+    /* Set RX and TX FIFO threshold levels */
+    DL_SPI_setFIFOThreshold(SPI_LCD_INST, DL_SPI_RX_FIFO_LEVEL_1_2_FULL, DL_SPI_TX_FIFO_LEVEL_1_2_EMPTY);
+
+    /* Enable module */
+    DL_SPI_enable(SPI_LCD_INST);
 }
 

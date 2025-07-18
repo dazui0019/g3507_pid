@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\pid_project;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares;..\libraries\printf</IncludePath>
+              <IncludePath>..\..\pid_project;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares;..\libraries\printf;..\drivers\st7789\src;..\drivers\st7789\test;..\drivers\st7789\example;..\drivers\st7789\interface</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,6 +448,39 @@
               <FilePath>..\applications\port_printf.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>drivers/st7789</GroupName>
+          <Files>
+            <File>
+              <FileName>driver_st7789.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\st7789\src\driver_st7789.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_st7789_basic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\st7789\example\driver_st7789_basic.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_st7789_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\st7789\interface\driver_st7789_interface.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>test/lcd</GroupName>
+          <Files>
+            <File>
+              <FileName>driver_st7789_display_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\st7789\test\driver_st7789_display_test.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>middlewares/hardfault</GroupName>
         </Group>
       </Groups>
     </Target>
