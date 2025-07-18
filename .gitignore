@@ -3,3 +3,4 @@ keil/*
 !keil/*.uvprojx
 !keil/*.uvoptx
 !keil/startup_mspm0g350x_uvision.s
+.cache
