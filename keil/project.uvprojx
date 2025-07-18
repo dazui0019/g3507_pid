@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\pid_project;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares;..\libraries\printf;..\drivers\st7789\src;..\drivers\st7789\test;..\drivers\st7789\example;..\drivers\st7789\interface</IncludePath>
+              <IncludePath>..\;..\source\third_party\CMSIS\Core\Include;..\source;..\bsp;..\applications;..\libraries;..\middlewares;..\libraries\printf;..\drivers\st7789\src;..\drivers\st7789\test;..\drivers\st7789\example;..\drivers\st7789\interface</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
