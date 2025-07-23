@@ -38,7 +38,127 @@
 #include "driver_st7789_display_image.h"
 #include <stdlib.h>
 
+/* Init script function */
+struct init_function {
+    uint16_t cmd;
+    uint16_t data;
+};
+
+/* Init script commands */
+enum INIT_cmd {
+    INIT_START,
+    INIT_END,
+    INIT_CMD,
+    INIT_DATA,
+    INIT_DELAY
+};
+
+static struct init_function init_cfg_script[] = {
+    { INIT_START, INIT_START},
+    {INIT_CMD, 0x11},
+
+    {INIT_CMD, 0x36},
+    {INIT_DATA, 0x70},
+    
+    {INIT_CMD, 0x3A},
+    {INIT_DATA, 0x05},
+    
+    {INIT_CMD, 0xB2},
+    {INIT_DATA, 0x0C},
+    {INIT_DATA, 0x0C},
+    {INIT_DATA, 0x00},
+    {INIT_DATA, 0x33},
+    {INIT_DATA, 0x33},
+    
+    {INIT_CMD, 0xB7},
+    {INIT_DATA, 0x35},
+    
+    {INIT_CMD, 0xBB},
+    {INIT_DATA, 0x1A},
+    
+    {INIT_CMD, 0xC0},
+    {INIT_DATA, 0x2C},
+
+    {INIT_CMD, 0xC2},
+    {INIT_DATA, 0x01},
+
+    {INIT_CMD, 0xC4},
+    {INIT_DATA, 0x20},
+
+    {INIT_CMD, 0xC6},
+    {INIT_DATA, 0x0F},
+
+    {INIT_CMD, 0xD0},
+    {INIT_DATA, 0xA4},
+    {INIT_DATA, 0xA1},
+
+    {INIT_CMD, 0x21},
+    {INIT_DATA, 0xE0},
+    {INIT_DATA, 0xF0},
+    {INIT_DATA, 0x00},
+    {INIT_DATA, 0x04},
+    {INIT_DATA, 0x04},
+    {INIT_DATA, 0x04},
+    {INIT_DATA, 0x05},
+    {INIT_DATA, 0x29},
+    {INIT_DATA, 0x33},
+    {INIT_DATA, 0x3E},
+    {INIT_DATA, 0x38},
+    {INIT_DATA, 0x12},
+    {INIT_DATA, 0x12},
+    {INIT_DATA, 0x28},
+    {INIT_DATA, 0x30},
+
+    {INIT_CMD, 0xE1},
+    {INIT_DATA, 0xF0},
+    {INIT_DATA, 0x07},
+    {INIT_DATA, 0x0A},
+    {INIT_DATA, 0x0D},
+    {INIT_DATA, 0x0B},
+    {INIT_DATA, 0x07},
+    {INIT_DATA, 0x28},
+    {INIT_DATA, 0x33},
+    {INIT_DATA, 0x3E},
+    {INIT_DATA, 0x36},
+    {INIT_DATA, 0x14},
+    {INIT_DATA, 0x14},
+    {INIT_DATA, 0x29},
+    {INIT_DATA, 0x32},
+
+    {INIT_CMD, 0x11},
+
+    {INIT_DELAY, 120},
+
+    {INIT_CMD, 0x29}
+};
+
 static st7789_handle_t gs_handle;        /**< st7789 handle */
+
+static void GC9A01_run_cfg_script(void)
+{
+    int i = 0;
+    int end_script = 0;
+
+    do {
+        switch (init_cfg_script[i].cmd)
+        {
+            case INIT_START:
+                break;
+            case INIT_CMD:
+                st7789_write_cmd(&gs_handle, init_cfg_script[i].data);
+                break;
+            case INIT_DATA:
+                st7789_write_data(&gs_handle, init_cfg_script[i].data);
+                break;
+            case INIT_DELAY:
+                st7789_interface_delay_ms(init_cfg_script[i].data);
+                break;
+            case INIT_END:
+                end_script = 1;
+        }
+        i++;
+    } while (!end_script);
+}
 
 /**
  * @brief  display test
@@ -110,7 +230,7 @@ uint8_t st7789_display_test(void)
     }
     
     /* set column */
-    res = st7789_set_column(&gs_handle, 240);
+    res = st7789_set_column(&gs_handle, 170);
     if (res != 0)
     {
         st7789_interface_debug_print("st7789: set column failed.\n");
@@ -128,6 +248,11 @@ uint8_t st7789_display_test(void)
         
         return 1;
     }
+
+    st7789_interface_reset_gpio_write(0);
+    st7789_interface_delay_ms(30);
+    st7789_interface_reset_gpio_write(1);
+    st7789_interface_delay_ms(100);
     
     /* sleep out */
     res = st7789_sleep_out(&gs_handle);
@@ -180,9 +305,7 @@ uint8_t st7789_display_test(void)
     }
     
     /* set memory data access control */
-    res = st7789_set_memory_data_access_control(&gs_handle, ST7789_ORDER_PAGE_TOP_TO_BOTTOM | ST7789_ORDER_COLUMN_LEFT_TO_RIGHT | 
-                                                            ST7789_ORDER_PAGE_COLUMN_NORMAL | ST7789_ORDER_LINE_TOP_TO_BOTTOM |
-                                                            ST7789_ORDER_COLOR_RGB | ST7789_ORDER_REFRESH_LEFT_TO_RIGHT);
+    res = st7789_set_memory_data_access_control(&gs_handle, 0x70);
     if (res != 0)
     {
         st7789_interface_debug_print("st7789: set memory data access control failed.\n");
